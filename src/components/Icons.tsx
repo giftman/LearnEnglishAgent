@@ -1,20 +1,3 @@
-export function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor" />
-    </svg>
-  );
-}
-
-export function PauseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" />
-      <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" />
-    </svg>
-  );
-}
-
 export function MicIcon() {
   return (
     <svg

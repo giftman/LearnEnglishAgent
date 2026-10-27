@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LessonHeader } from "../components/LessonHeader";
-import { PauseIcon, PlayIcon } from "../components/Icons";
 import { Waveform } from "../components/Waveform";
 import { LESSON_1 } from "../content/lesson";
 import { PLAYER_COPY, lessonPath, nextStep } from "../content/stepCopy";
@@ -125,7 +124,7 @@ export function ListenPage({ step }: { step: Exclude<StepId, "read"> }) {
               <span className="audio-subtitle">{copy.subtitle}</span>
             </div>
             <button type="button" className="play-button" aria-label={playback.playing ? "暂停" : "播放"} onClick={onToggle}>
-              {playback.playing ? <PauseIcon /> : <PlayIcon />}
+              {playback.playing ? "Ⅱ" : "▶"}
             </button>
             <p className="player-status">{status}</p>
             {step === "video" ? (
