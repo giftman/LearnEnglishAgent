@@ -1,7 +1,7 @@
 /**
- * Audio is not committed. Drop a file at:
+ * Lesson 1 UK audio is committed at:
  *   public/assets/audio/nc2/01.A Private Conversation.mp3
- * The same filename is the R2 object name.
+ * The same filename is the R2 object name. Other lessons stay out of git.
  *
  * R2 keys:
  *   audio/nc2/{file}                         textbook mp3 and lrc

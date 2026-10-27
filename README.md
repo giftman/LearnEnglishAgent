@@ -26,10 +26,10 @@ npm run preview
 | 路径 | 做什么 |
 | --- | --- |
 | `/` | 今日课、连续天、待复习、外链 |
-| `/lesson/v73/listen` | 逐句听。没有 mp3 时按 LRC 时间轴演示高亮 |
-| `/lesson/v73/shadow` | 跟读。同一套播放器，当前句循环 |
-| `/lesson/v73/read` | 朗读。计时是演示，反馈是写死的示例 |
-| `/lesson/v73/video` | 视频占位，链到 B 站 `BV1AK4y1A7Z1` 的 `p=2` |
+| `/lesson/v73/listen` | 逐句听 Lesson 1 英音课文，按 LRC 时间高亮 |
+| `/lesson/v73/shadow` | 跟读。同一套课文音频，当前句循环 |
+| `/lesson/v73/read` | 朗读计时。反馈按这一课的三处发音来提醒 |
+| `/lesson/v73/video` | 打开 B 站 `BV1AK4y1A7Z1` 的 `p=2`，页内仍可播放课文音频 |
 
 首页「继续」回到第一个还没点完成的步骤。四步都能直接点进去。点每步底部的主按钮，才会把这一步记成完成。
 
@@ -50,24 +50,23 @@ npm run preview
 
 完成视频步之后，会排上 Z73 的词 / 译 / 听，到期日分别是次日、+2 天、+4 天。同一天不会叠在一起。P0 没有复习做题页，到期项只显示在首页和「复习」说明里。
 
-## 音频不要提交
+## 音频
 
-课文 mp3 不进 git。约定：
+Lesson 1 的英音课文随站点一起提供：
 
 ```text
 public/assets/audio/nc2/01.A Private Conversation.mp3
-public/assets/audio/nc2/01.A Private Conversation.lrc
 ```
 
-对应的 R2 对象键：
+听和跟读都播放这个文件，并按 `src/content/lesson1.lrc` 的时间高亮。文件加载失败时，播放器停住并写明「课文音频加载失败」，不会再用静音时钟假装在播。
+
+其余课文的 mp3 仍不进 git。对象键约定：
 
 ```text
 audio/nc2/01.A Private Conversation.mp3
 audio/nc2/01.A Private Conversation.lrc
 recordings/local/v73/{recordingId}.webm
 ```
-
-把 mp3 放到上面的本地路径后，播放器会改用真实音频，并按 LRC 时间高亮。不放文件就走演示时钟。
 
 如果音频在公开的 R2 域名上，构建前设置：
 

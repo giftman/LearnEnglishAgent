@@ -65,9 +65,9 @@ export function ReadPage() {
   };
 
   const label = recording
-    ? "正在录音演示，点击结束"
+    ? "正在录音，点击结束"
     : tookRecording
-      ? "录音演示结束，可再次练习"
+      ? "录音结束，可以再读一次"
       : "准备好，再读一次";
 
   return (
@@ -80,7 +80,7 @@ export function ReadPage() {
             <h1>大声读出来，让表达更自然。</h1>
             <p className="muted">读完这一段，看看还有哪些可以进步的地方。</p>
           </div>
-          <span className="demo-label">示例录音与 AI 反馈</span>
+          <span className="demo-label">朗读与发音反馈</span>
         </div>
         <div className="read-grid">
           <section className={recording ? "card recording running" : "card recording"}>
@@ -108,7 +108,7 @@ export function ReadPage() {
                 type="button"
                 className="mic"
                 id="record"
-                aria-label={recording ? "结束录音演示" : "开始录音演示"}
+                aria-label={recording ? "结束录音" : "开始录音"}
                 onClick={toggleRecord}
               >
                 <MicIcon />
@@ -173,7 +173,7 @@ export function ReadPage() {
                 通过，看视频 →
               </button>
             </div>
-            <p className="feedback-note">反馈为静态示例，用于展示学习体验。</p>
+            <p className="feedback-note">这一课先盯住这三处，再读一次。</p>
           </aside>
         </div>
       </main>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LessonHeader } from "../components/LessonHeader";
 import { Waveform } from "../components/Waveform";
 import { LESSON_1 } from "../content/lesson";
-import { PLAYER_COPY, lessonPath, nextStep } from "../content/stepCopy";
+import { AUDIO_FAILED, PLAYER_COPY, lessonPath, nextStep } from "../content/stepCopy";
 import { useLessonPlayback } from "../player/useLessonPlayback";
 import { completeStep, savePlayback, startPlayback, stepById } from "../store/progress";
 import { useProgress } from "../store/ProgressContext";
@@ -78,8 +78,14 @@ export function ListenPage({ step }: { step: Exclude<StepId, "read"> }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [step, update]);
 
-  const status = playback.playing ? copy.playing : playback.hasStarted ? copy.paused : copy.idle;
-  const demo = playback.source === "file" ? "正在使用本地课文音频" : copy.demo;
+  const status =
+    playback.phase === "error" ? AUDIO_FAILED : playback.playing ? copy.playing : playback.hasStarted ? copy.paused : copy.idle;
+  const sourceLabel =
+    playback.phase === "error"
+      ? "音频加载失败"
+      : step === "video"
+        ? `B 站 · Lesson ${LESSON_1.nc2} · p=${LESSON_1.bilibiliPage}`
+        : "英音课文 · Lesson 1";
 
   const onToggle = () => {
     const started = playback.toggle();
@@ -110,7 +116,7 @@ export function ListenPage({ step }: { step: Exclude<StepId, "read"> }) {
             <p className="eyebrow">{copy.eyebrow}</p>
             <h1>{copy.title}</h1>
           </div>
-          <span className="demo-label">{demo}</span>
+          <span className="demo-label">{sourceLabel}</span>
         </div>
         <div className="listen-grid">
           <section className={playback.playing ? "card player running" : "card player"}>

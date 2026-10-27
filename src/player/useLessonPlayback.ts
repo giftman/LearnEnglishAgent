@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Sentence } from "../content/lesson";
 import type { StepId } from "../store/types";
 
+export type PlaybackPhase = "loading" | "ready" | "error";
+
 export function useLessonPlayback(
   sentences: Sentence[],
   step: StepId,
@@ -14,23 +16,31 @@ export function useLessonPlayback(
   const [playing, setPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [rate, setRate] = useState(1);
-  const [source, setSource] = useState<"mock" | "file">("mock");
-  const [loopTick, setLoopTick] = useState(0);
+  const [phase, setPhase] = useState<PlaybackPhase>("loading");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const indexRef = useRef(index);
   const stepRef = useRef(step);
+  const sentencesRef = useRef(sentences);
 
   useEffect(() => {
     indexRef.current = index;
     stepRef.current = step;
-  }, [index, step]);
+    sentencesRef.current = sentences;
+  }, [index, step, sentences]);
 
   useEffect(() => {
     const audio = new Audio(audioUrl);
     audio.preload = "auto";
     audioRef.current = audio;
-    const onReady = () => setSource("file");
-    const onError = () => setSource("mock");
+    const onReady = () => {
+      const current = sentencesRef.current[indexRef.current];
+      if (current) audio.currentTime = current.startSec;
+      setPhase("ready");
+    };
+    const onError = () => {
+      setPhase("error");
+      setPlaying(false);
+    };
     const onEnded = () => setPlaying(false);
     audio.addEventListener("loadedmetadata", onReady);
     audio.addEventListener("error", onError);
@@ -49,7 +59,7 @@ export function useLessonPlayback(
     if (!audio) return;
     const onTime = () => {
       if (audio.paused) return;
-      const list = sentences;
+      const list = sentencesRef.current;
       if (stepRef.current === "shadow") {
         const current = list[indexRef.current];
         if (current && audio.currentTime >= current.endSec - 0.08) {
@@ -66,11 +76,11 @@ export function useLessonPlayback(
     };
     audio.addEventListener("timeupdate", onTime);
     return () => audio.removeEventListener("timeupdate", onTime);
-  }, [sentences]);
+  }, [audioUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || source !== "file") return;
+    if (!audio || phase === "error") return;
     audio.playbackRate = rate;
     if (!playing) {
       audio.pause();
@@ -83,27 +93,12 @@ export function useLessonPlayback(
     ) {
       audio.currentTime = current.startSec;
     }
-    void audio.play().catch(() => setPlaying(false));
-  }, [source, playing, rate, sentences]);
-
-  useEffect(() => {
-    if (!playing || source !== "mock") return;
-    const current = sentences[index];
-    if (!current) return;
-    const ms = Math.max(900, ((current.endSec - current.startSec) * 1000) / rate);
-    const timer = window.setTimeout(() => {
-      if (step === "shadow") {
-        setLoopTick((value) => value + 1);
-        return;
-      }
-      if (index < sentences.length - 1) {
-        setIndex(index + 1);
-        return;
-      }
+    void audio.play().catch((error: unknown) => {
+      if (error instanceof DOMException && error.name === "AbortError") return;
       setPlaying(false);
-    }, ms);
-    return () => window.clearTimeout(timer);
-  }, [playing, source, index, rate, step, sentences, loopTick]);
+      setPhase("error");
+    });
+  }, [phase, playing, rate, sentences]);
 
   const select = (nextIndex: number) => {
     if (sentences.length === 0) return;
@@ -111,10 +106,14 @@ export function useLessonPlayback(
     setIndex(wrapped);
     const audio = audioRef.current;
     const current = sentences[wrapped];
-    if (audio && source === "file" && current) audio.currentTime = current.startSec;
+    if (audio && current && Number.isFinite(audio.duration)) audio.currentTime = current.startSec;
   };
 
   const toggle = () => {
+    if (phase === "error") {
+      setPlaying(false);
+      return false;
+    }
     const next = !playing;
     if (next) setHasStarted(true);
     setPlaying(next);
@@ -126,7 +125,7 @@ export function useLessonPlayback(
     playing,
     hasStarted,
     rate,
-    source,
+    phase,
     setRate,
     select,
     toggle,

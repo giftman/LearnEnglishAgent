@@ -23,7 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Textbook mp3/wav stay on R2. See README.
+# Later lessons stay off git. Lesson 1 ships with the site so listen/shadow have sound.
 *.mp3
+!public/assets/audio/nc2/01.A Private Conversation.mp3
 *.wav
 *.webm
